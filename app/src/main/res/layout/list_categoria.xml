@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#E6FAE6"
+        app:cardElevation="5dp"
+        app:contentPadding="10dp"
+        app:cardUseCompatPadding="true"
+>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <TextView
+                    android:text="Categoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/textViewCategoriaArticulo"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.2" app:layout_constraintVertical_bias="0.0"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/textViewCategoria"
+                    app:layout_constraintStart_toEndOf="@+id/textViewCategoriaArticulo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.547"
+                    app:layout_constraintTop_toTopOf="parent"
+            />
+            <Button
+                    android:text="Borrar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/buttonBorrar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewCategoriaArticulo"
+                    app:layout_constraintVertical_bias="1.0" app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

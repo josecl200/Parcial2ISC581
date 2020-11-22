@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#E6FAE6"
+        app:cardElevation="5dp"
+        app:contentPadding="10dp"
+        app:cardUseCompatPadding="true"
+>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ImageView
+                android:layout_width="128dp"
+                android:layout_height="200dp" app:srcCompat="@android:mipmap/sym_def_app_icon"
+                android:id="@+id/productImage" android:contentDescription="Android version logo"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <TextView
+                    android:text="Nombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/textViewNombreArticulo"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" android:layout_marginStart="28dp"/>
+            <TextView
+                    android:text="Categoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/textViewCategoriaArticulo"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewNombreArticulo"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="28dp" app:layout_constraintVertical_bias="0.156"
+            />
+            <TextView
+                    android:text="Precio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/textViewPrecioArticulo"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="28dp"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewCategoriaArticulo"
+                    app:layout_constraintVertical_bias="0.333"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/textViewNombre"
+                    app:layout_constraintStart_toEndOf="@+id/textViewNombreArticulo"
+                    app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="12dp" app:layout_constraintHorizontal_bias="0.358"
+            />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/textViewCategoria"
+                    app:layout_constraintStart_toEndOf="@+id/textViewCategoriaArticulo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewNombreArticulo"
+                    android:layout_marginTop="20dp" app:layout_constraintHorizontal_bias="0.274"
+            />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/textViewPrecio"
+                    app:layout_constraintStart_toEndOf="@+id/textViewPrecioArticulo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewCategoriaArticulo"
+                    app:layout_constraintHorizontal_bias="0.426"
+                    app:layout_constraintVertical_bias="0.291"/>
+            <Button
+                    android:text="Borrar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/buttonBorrar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewPrecioArticulo" android:layout_marginTop="12dp"
+                    android:layout_marginStart="20dp" app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="1.0"/>
+            <Button
+                    android:text="Modificar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/buttonModificar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewPrecio"
+                    app:layout_constraintStart_toEndOf="@+id/buttonBorrar"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.517" app:layout_constraintVertical_bias="1.0"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

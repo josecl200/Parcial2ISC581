@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/addNewProductMenuButton" android:title="Nuevo producto"
+          android:icon="@drawable/ic_baseline_add_box_24" android:enabled="true" android:visible="true"
+          app:showAsAction="ifRoom"/>
+</menu>

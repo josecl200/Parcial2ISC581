@@ -36,11 +36,32 @@ public class ProductoDB {
         sqLiteDatabase.insert("PRODUCTS", null, values);
     }
 
+    public void update(Integer id, String name, int price, int category, String baseImage){
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.NAME, name);
+        values.put(DBHelper.PRICE, price);
+        values.put("CATEGORY", category);
+        values.put(DBHelper.B64_IMG, baseImage);
+        sqLiteDatabase.update("PRODUCTS", values, "id = ?", new String[]{id.toString()});
+
+    }
+
     public Cursor fetchAll() {
         String[] columns = new String[]{DBHelper.PRODUCT_ID,
                 DBHelper.NAME, DBHelper.PRICE,
                 "CATEGORY", DBHelper.B64_IMG};
         Cursor cursor = sqLiteDatabase.query("PRODUCTS",columns,null,null,null,null,null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+        }
+        return cursor;
+    }
+
+    public Cursor fetchByID(Integer id) {
+        String[] columns = new String[]{DBHelper.PRODUCT_ID,
+                DBHelper.NAME, DBHelper.PRICE,
+                "CATEGORY", DBHelper.B64_IMG};
+        Cursor cursor = sqLiteDatabase.query("PRODUCTS",columns,"id = ?",new String[]{id.toString()},null,null,null);
         if (cursor != null) {
             cursor.moveToFirst();
         }

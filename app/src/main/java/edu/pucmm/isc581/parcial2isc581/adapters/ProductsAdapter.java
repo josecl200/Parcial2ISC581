@@ -1,6 +1,7 @@
 package edu.pucmm.isc581.parcial2isc581.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -15,6 +16,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import edu.pucmm.isc581.parcial2isc581.R;
+import edu.pucmm.isc581.parcial2isc581.activities.CreateProductActivity;
+import edu.pucmm.isc581.parcial2isc581.activities.MainActivity;
+import edu.pucmm.isc581.parcial2isc581.activities.ModifyProductActivity;
 import edu.pucmm.isc581.parcial2isc581.datamodels.ProductoModel;
 import edu.pucmm.isc581.parcial2isc581.dbModels.CategoriaDB;
 import edu.pucmm.isc581.parcial2isc581.dbModels.ProductoDB;
@@ -86,7 +90,9 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
             precioProducto.setText(productoModel.getPrice().toString());
             categoriaProducto.setText(productoModel.getCategory());
             btnMod.setOnClickListener(v -> {
-                Toast.makeText(context, "MODIFY PRODUCT WITH ID" + productoModel.getId().toString(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(context, ModifyProductActivity.class);
+                intent.putExtra("id", productoModel.getId());
+                context.startActivity(intent);
             });
             btnDel.setOnClickListener(v -> {
                 ProductoDB productoDB= new ProductoDB(context).open();

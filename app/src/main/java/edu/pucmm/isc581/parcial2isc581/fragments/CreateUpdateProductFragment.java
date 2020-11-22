@@ -1,15 +1,21 @@
 package edu.pucmm.isc581.parcial2isc581.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaDataSource;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.*;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +43,12 @@ public class CreateUpdateProductFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "modify";
     private static final String ARG_PARAM2 = "id";
+    private static int RESULT_LOAD_IMAGE = 1;
+
+    ImageView productImage;
+    EditText nombre, precio;
+    Button btnUpdate, btnSave, btnDelete, btnAddCategory;
+    Spinner spnCategory;
 
     // TODO: Rename and change types of parameters
     private Boolean modify;
@@ -65,22 +77,17 @@ public class CreateUpdateProductFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println(getArguments());
         if (getArguments() != null) {
             modify = getArguments().getBoolean(ARG_PARAM1);
             id = getArguments().getInt(ARG_PARAM2, -1);
         }
-
-           }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_create_update_product, container, false);
-        ImageView productImage;
-        EditText nombre, precio;
-        Button btnUpdate, btnSave, btnDelete, btnAddCategory;
-        Spinner spnCategory;
 
         productImage = view.findViewById(R.id.productImage);
         nombre = view.findViewById(R.id.textEditName);
@@ -90,6 +97,8 @@ public class CreateUpdateProductFragment extends Fragment {
         btnUpdate = view.findViewById(R.id.btnUpdate);
         btnAddCategory = view.findViewById(R.id.buttonAddCategory);
         spnCategory = view.findViewById(R.id.spnCategory);
+        ProductoDB productoDB = new ProductoDB(this.getContext());
+
         CategoriaDB categoriaDB = new CategoriaDB(this.getContext()).open();
         ArrayList<String> listCategory = new ArrayList<String>();
         Cursor categorias = categoriaDB.fetchAll();
@@ -101,20 +110,26 @@ public class CreateUpdateProductFragment extends Fragment {
         ArrayAdapter<String> spnCategoryAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
         spnCategory.setAdapter(spnCategoryAdapter);
 
+        productImage.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)==0)
+                loadImage();
+            else
+                ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 200);
+        });
 
         btnSave.setOnClickListener(v -> {
             if(nombre.getText().toString().isEmpty() || precio.getText().toString().isEmpty() || spnCategory.getSelectedItem().toString().isEmpty())
-                Toast.makeText(getContext(), "SAVE", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Llene todos los campos", Toast.LENGTH_SHORT).show();
             else{
-                ProductoDB productoDB = new ProductoDB(this.getContext()).open();
+                productoDB.open();
                 categoriaDB.open();
                 Bitmap bitmap = Bitmap.createBitmap(productImage.getDrawable().getIntrinsicWidth(), productImage.getDrawable().getIntrinsicHeight(), Bitmap.Config.RGBA_F16);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                Log.wtf("B64IMGPUT", Base64.encodeToString(byteArray, Base64.URL_SAFE));
+
+                Log.wtf("B64IMGPUT", Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
                 productoDB.insert(nombre.getText().toString(),Integer.parseInt(precio.getText().toString()),
-                        categoriaDB.fetchByName(spnCategory.getSelectedItem().toString()).getInt(0), Base64.encodeToString(byteArray, Base64.DEFAULT));
+                        categoriaDB.fetchByName(spnCategory.getSelectedItem().toString()).getInt(0), Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
                 categoriaDB.close();
                 productoDB.close();
                 bitmap.recycle();
@@ -122,15 +137,56 @@ public class CreateUpdateProductFragment extends Fragment {
             }
         });
 
+        btnUpdate.setOnClickListener(v -> {
+            if(nombre.getText().toString().isEmpty() || precio.getText().toString().isEmpty() || spnCategory.getSelectedItem().toString().isEmpty())
+                Toast.makeText(getContext(), "Llene todos los campos", Toast.LENGTH_SHORT).show();
+            else{
+                productoDB.open();
+                categoriaDB.open();
+                Bitmap bitmap = Bitmap.createBitmap(productImage.getDrawable().getIntrinsicWidth(), productImage.getDrawable().getIntrinsicHeight(), Bitmap.Config.RGBA_F16);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+                Log.wtf("B64IMGPUT", Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
+                productoDB.update(id, nombre.getText().toString(),Integer.parseInt(precio.getText().toString()),
+                        categoriaDB.fetchByName(spnCategory.getSelectedItem().toString()).getInt(0), Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
+                categoriaDB.close();
+                productoDB.close();
+                bitmap.recycle();
+                this.getActivity().finish();
+            }
+        });
+
+        btnDelete.setOnClickListener(v -> {
+                productoDB.open();
+                productoDB.delete(id);
+                productoDB.close();
+                this.getActivity().finish();
+        });
+
         btnAddCategory.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), CreateCategoryActivity.class);
             startActivity(intent);
         });
 
-        if (modify)
-            btnSave.setVisibility(View.INVISIBLE);
-        else
-            btnUpdate.setVisibility(View.INVISIBLE); btnDelete.setVisibility(View.INVISIBLE);
+        if (modify) {
+            productoDB.open();
+            Cursor cursor = productoDB.fetchByID(id);
+            btnSave.setVisibility(View.GONE);
+            nombre.setText(cursor.getString(1));
+            precio.setText(String.valueOf(cursor.getInt(2)));
+            categoriaDB.open();
+            String catName = categoriaDB.fetchByID(cursor.getInt(3)).getString(1);
+            categoriaDB.close();
+            for (int i= 0; i < spnCategory.getAdapter().getCount(); i++) {
+                if(spnCategory.getAdapter().getItem(i).toString().equals(catName)) {
+                    spnCategory.setSelection(i);
+                }
+            }
+        } else{
+            btnUpdate.setVisibility(View.GONE);
+            btnDelete.setVisibility(View.GONE);
+        }
 
         return view;
     }
@@ -146,5 +202,38 @@ public class CreateUpdateProductFragment extends Fragment {
             listCategory.add(categorias.getString(1));
         ArrayAdapter<String> spnCategoryAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
         spnCategory.setAdapter(spnCategoryAdapter);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == 200 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            loadImage();
+        else
+            Toast.makeText(this.getContext(), "Necessary permissions not granted.", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.wtf("requestCode", Integer.toString(requestCode));
+        Log.wtf("resultCode", Integer.toString(resultCode));
+        if (requestCode == RESULT_LOAD_IMAGE && data != null){
+            try {
+                final Uri imagen = data.getData();
+                productImage = getView().findViewById(R.id.productImage);
+                productImage.setImageURI(imagen);
+            } catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(this.getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void loadImage() {
+        Intent storageIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        storageIntent.setType("image/*");
+        startActivityForResult(Intent.createChooser(storageIntent, "Select Picture"), RESULT_LOAD_IMAGE);
+
     }
 }

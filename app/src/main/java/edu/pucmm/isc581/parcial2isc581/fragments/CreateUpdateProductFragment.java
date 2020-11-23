@@ -91,7 +91,8 @@ public class CreateUpdateProductFragment extends Fragment {
             listCategory.add(categorias.getString(1));
             categorias.moveToNext();
         }
-        ArrayAdapter spnCategoryAdapter = new ArrayAdapter<String>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
+        ArrayAdapter spnCategoryAdapter;
+        spnCategoryAdapter = new ArrayAdapter<String>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
         spnCategory.setAdapter(spnCategoryAdapter);
 
         productImage.setOnClickListener(v -> {
@@ -186,8 +187,10 @@ public class CreateUpdateProductFragment extends Fragment {
         CategoriaDB categoriaDB = new CategoriaDB(this.getContext()).open();
         List<String> listCategory = new ArrayList<>();
         Cursor categorias = categoriaDB.fetchAll();
-        while (categorias.moveToNext())
+        while (!categorias.isAfterLast()){
             listCategory.add(categorias.getString(1));
+            categorias.moveToNext();
+        }
         ArrayAdapter<String> spnCategoryAdapter = new ArrayAdapter<String>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
         spnCategory.setAdapter(spnCategoryAdapter);
     }

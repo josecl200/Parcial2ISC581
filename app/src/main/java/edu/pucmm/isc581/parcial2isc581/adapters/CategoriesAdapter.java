@@ -71,9 +71,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
                 CategoriaDB categoriaDB= new CategoriaDB(context).open();
                 Boolean result = categoriaDB.delete(categoriaModel.getId());
                 categoriaDB.close();
-                if(result){
+                if(result)
                     adapter.deleteItem(getAdapterPosition());
-                }else{
+                else{
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                     alertDialogBuilder.setTitle("Error al borrar categoria");
                     alertDialogBuilder.setMessage("Hay productos asociados a esta categoria");

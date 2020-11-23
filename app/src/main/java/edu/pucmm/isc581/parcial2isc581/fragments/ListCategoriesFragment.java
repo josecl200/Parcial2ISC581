@@ -16,11 +16,6 @@ import edu.pucmm.isc581.parcial2isc581.dbModels.CategoriaDB;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ListCategoriesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ListCategoriesFragment extends Fragment {
 
     public ListCategoriesFragment() {

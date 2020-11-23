@@ -32,15 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CreateUpdateProductFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import static android.app.Activity.RESULT_OK;
+
 public class CreateUpdateProductFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "modify";
     private static final String ARG_PARAM2 = "id";
     private static int RESULT_LOAD_IMAGE = 1;
@@ -50,21 +45,12 @@ public class CreateUpdateProductFragment extends Fragment {
     Button btnUpdate, btnSave, btnDelete, btnAddCategory;
     Spinner spnCategory;
 
-    // TODO: Rename and change types of parameters
     private Boolean modify;
     private Integer id;
 
-    public CreateUpdateProductFragment() {
-        // Required empty public constructor
-    }
+    public CreateUpdateProductFragment() {}
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment CreateUpdateProductFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static CreateUpdateProductFragment newInstance(Boolean modify, Integer id) {
         CreateUpdateProductFragment fragment = new CreateUpdateProductFragment();
         Bundle args = new Bundle();
@@ -98,7 +84,6 @@ public class CreateUpdateProductFragment extends Fragment {
         btnAddCategory = view.findViewById(R.id.buttonAddCategory);
         spnCategory = view.findViewById(R.id.spnCategory);
         ProductoDB productoDB = new ProductoDB(this.getContext());
-
         CategoriaDB categoriaDB = new CategoriaDB(this.getContext()).open();
         ArrayList<String> listCategory = new ArrayList<String>();
         Cursor categorias = categoriaDB.fetchAll();
@@ -106,8 +91,7 @@ public class CreateUpdateProductFragment extends Fragment {
             listCategory.add(categorias.getString(1));
             categorias.moveToNext();
         }
-        System.out.println(listCategory);
-        ArrayAdapter<String> spnCategoryAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
+        ArrayAdapter spnCategoryAdapter = new ArrayAdapter<String>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
         spnCategory.setAdapter(spnCategoryAdapter);
 
         productImage.setOnClickListener(v -> {
@@ -123,11 +107,11 @@ public class CreateUpdateProductFragment extends Fragment {
             else{
                 productoDB.open();
                 categoriaDB.open();
-                Bitmap bitmap = Bitmap.createBitmap(productImage.getDrawable().getIntrinsicWidth(), productImage.getDrawable().getIntrinsicHeight(), Bitmap.Config.RGBA_F16);
+                BitmapDrawable drawable = (BitmapDrawable) productImage.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
-                Log.wtf("B64IMGPUT", Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
                 productoDB.insert(nombre.getText().toString(),Integer.parseInt(precio.getText().toString()),
                         categoriaDB.fetchByName(spnCategory.getSelectedItem().toString()).getInt(0), Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
                 categoriaDB.close();
@@ -143,11 +127,10 @@ public class CreateUpdateProductFragment extends Fragment {
             else{
                 productoDB.open();
                 categoriaDB.open();
-                Bitmap bitmap = Bitmap.createBitmap(productImage.getDrawable().getIntrinsicWidth(), productImage.getDrawable().getIntrinsicHeight(), Bitmap.Config.RGBA_F16);
+                BitmapDrawable drawable = (BitmapDrawable) productImage.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-
-                Log.wtf("B64IMGPUT", Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
                 productoDB.update(id, nombre.getText().toString(),Integer.parseInt(precio.getText().toString()),
                         categoriaDB.fetchByName(spnCategory.getSelectedItem().toString()).getInt(0), Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
                 categoriaDB.close();
@@ -175,14 +158,19 @@ public class CreateUpdateProductFragment extends Fragment {
             btnSave.setVisibility(View.GONE);
             nombre.setText(cursor.getString(1));
             precio.setText(String.valueOf(cursor.getInt(2)));
+            byte[] valueDecoded= new byte[0];
+            try {
+                valueDecoded = Base64.decode(cursor.getString(4), Base64.DEFAULT);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            productImage.setImageBitmap(BitmapFactory.decodeByteArray(valueDecoded, 0, valueDecoded.length));
             categoriaDB.open();
             String catName = categoriaDB.fetchByID(cursor.getInt(3)).getString(1);
             categoriaDB.close();
-            for (int i= 0; i < spnCategory.getAdapter().getCount(); i++) {
-                if(spnCategory.getAdapter().getItem(i).toString().equals(catName)) {
+            for (int i= 0; i < spnCategory.getAdapter().getCount(); i++)
+                if(spnCategory.getAdapter().getItem(i).toString().equals(catName))
                     spnCategory.setSelection(i);
-                }
-            }
         } else{
             btnUpdate.setVisibility(View.GONE);
             btnDelete.setVisibility(View.GONE);
@@ -200,7 +188,7 @@ public class CreateUpdateProductFragment extends Fragment {
         Cursor categorias = categoriaDB.fetchAll();
         while (categorias.moveToNext())
             listCategory.add(categorias.getString(1));
-        ArrayAdapter<String> spnCategoryAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
+        ArrayAdapter<String> spnCategoryAdapter = new ArrayAdapter<String>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
         spnCategory.setAdapter(spnCategoryAdapter);
     }
 
@@ -218,7 +206,7 @@ public class CreateUpdateProductFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         Log.wtf("requestCode", Integer.toString(requestCode));
         Log.wtf("resultCode", Integer.toString(resultCode));
-        if (requestCode == RESULT_LOAD_IMAGE && data != null){
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null){
             try {
                 final Uri imagen = data.getData();
                 productImage = getView().findViewById(R.id.productImage);

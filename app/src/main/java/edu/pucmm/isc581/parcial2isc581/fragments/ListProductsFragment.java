@@ -19,21 +19,10 @@ import edu.pucmm.isc581.parcial2isc581.dbModels.ProductoDB;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ListProductsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ListProductsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-    // TODO: Rename and change types of parameters
-
-    public ListProductsFragment() {
-        // Required empty public constructor
-    }
+    public ListProductsFragment() {}
 
     public static ListProductsFragment newInstance() {
         ListProductsFragment fragment = new ListProductsFragment();
@@ -50,9 +39,7 @@ public class ListProductsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list_products, container, false);
-
         List<ProductoModel> listProducto = new ArrayList<>();
         RecyclerView productoRecyclerView = view.findViewById(R.id.productoRecyclerView);
         ProductoDB productoDB = new ProductoDB(this.getContext()).open();
@@ -70,7 +57,6 @@ public class ListProductsFragment extends Fragment {
         productoRecyclerView.setLayoutManager(mLayoutManager);
         ProductsAdapter productsAdapter = new ProductsAdapter(listProducto, this.getContext());
         productoRecyclerView.setAdapter(productsAdapter);
-
         return view;
     }
 

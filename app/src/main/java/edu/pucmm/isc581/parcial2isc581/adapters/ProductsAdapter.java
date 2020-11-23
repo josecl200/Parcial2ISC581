@@ -78,9 +78,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
         public void bindData(ProductoModel productoModel, Context context){
             byte[] valueDecoded= new byte[0];
-            Log.wtf("B64IMGRT", productoModel.getImage64());
             try {
-                valueDecoded = Base64.decode(productoModel.getImage64(), Base64.URL_SAFE);
+                valueDecoded = Base64.decode(productoModel.getImage64(), Base64.DEFAULT);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolBar);
         toolbar.inflateMenu(R.menu.menu_appbar);
         toolbar.setTitle("Examen SQLite");
-
+        
         TabsLayoutAdapter tabsLayoutAdapter = new TabsLayoutAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(tabsLayoutAdapter);

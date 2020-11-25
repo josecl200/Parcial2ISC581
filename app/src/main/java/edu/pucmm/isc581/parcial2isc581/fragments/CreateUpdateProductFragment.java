@@ -1,6 +1,7 @@
 package edu.pucmm.isc581.parcial2isc581.fragments;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -91,6 +93,7 @@ public class CreateUpdateProductFragment extends Fragment {
             listCategory.add(categorias.getString(1));
             categorias.moveToNext();
         }
+        productImage.setImageResource(R.drawable.cupcake);
         ArrayAdapter spnCategoryAdapter;
         spnCategoryAdapter = new ArrayAdapter<String>(this.getContext(),R.layout.support_simple_spinner_dropdown_item, listCategory);
         spnCategory.setAdapter(spnCategoryAdapter);
@@ -109,7 +112,7 @@ public class CreateUpdateProductFragment extends Fragment {
                 productoDB.open();
                 categoriaDB.open();
                 BitmapDrawable drawable = (BitmapDrawable) productImage.getDrawable();
-                Bitmap bitmap = drawable.getBitmap();
+                Bitmap bitmap =  drawable.getBitmap();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
@@ -121,6 +124,8 @@ public class CreateUpdateProductFragment extends Fragment {
                 this.getActivity().finish();
             }
         });
+
+        getActivity().setTitle("Crear Producto");
 
         btnUpdate.setOnClickListener(v -> {
             if(nombre.getText().toString().isEmpty() || precio.getText().toString().isEmpty() || spnCategory.getSelectedItem().toString().isEmpty())
@@ -142,10 +147,18 @@ public class CreateUpdateProductFragment extends Fragment {
         });
 
         btnDelete.setOnClickListener(v -> {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+            alertDialogBuilder.setTitle("Borrar producto");
+            alertDialogBuilder.setMessage("Está seguro de que quiere borrar este producto?");
+            alertDialogBuilder.setPositiveButton("Sí", (dialogInterface, i) -> {
                 productoDB.open();
                 productoDB.delete(id);
                 productoDB.close();
-                this.getActivity().finish();
+                CreateUpdateProductFragment.this.getActivity().finish();
+            });
+            alertDialogBuilder.setCancelable(true);
+            alertDialogBuilder.show();
+
         });
 
         btnAddCategory.setOnClickListener(v -> {
@@ -154,6 +167,7 @@ public class CreateUpdateProductFragment extends Fragment {
         });
 
         if (modify) {
+            getActivity().setTitle("Modificar Producto");
             productoDB.open();
             Cursor cursor = productoDB.fetchByID(id);
             btnSave.setVisibility(View.GONE);

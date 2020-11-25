@@ -1,6 +1,7 @@
 package edu.pucmm.isc581.parcial2isc581.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import edu.pucmm.isc581.parcial2isc581.R;
 import edu.pucmm.isc581.parcial2isc581.datamodels.CategoriaModel;
 import edu.pucmm.isc581.parcial2isc581.datamodels.ProductoModel;
 import edu.pucmm.isc581.parcial2isc581.dbModels.CategoriaDB;
+import edu.pucmm.isc581.parcial2isc581.fragments.CreateUpdateProductFragment;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -68,17 +70,26 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             nombreCategoria.setText(categoriaModel.getNombre());
 
             btnDel.setOnClickListener(v -> {
-                CategoriaDB categoriaDB= new CategoriaDB(context).open();
-                Boolean result = categoriaDB.delete(categoriaModel.getId());
-                categoriaDB.close();
-                if(result)
-                    adapter.deleteItem(getAdapterPosition());
-                else{
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                    alertDialogBuilder.setTitle("Error al borrar categoria");
-                    alertDialogBuilder.setMessage("Hay productos asociados a esta categoria");
-                    alertDialogBuilder.show();
-                }
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(btnDel.getContext());
+                alertDialogBuilder.setTitle("Borrar producto");
+                alertDialogBuilder.setMessage("Está seguro de que quiere borrar la categoria ".concat(categoriaModel.getNombre().concat("?"))  );
+                alertDialogBuilder.setPositiveButton("Sí", (dialogInterface, i) -> {
+                    CategoriaDB categoriaDB= new CategoriaDB(context).open();
+                    Boolean result = categoriaDB.delete(categoriaModel.getId());
+                    categoriaDB.close();
+                    if(result)
+                        adapter.deleteItem(getAdapterPosition());
+                    else{
+                        AlertDialog.Builder alertDialogBuilder1 = new AlertDialog.Builder(context);
+                        alertDialogBuilder1.setTitle("Error al borrar categoria");
+                        alertDialogBuilder1.setMessage("Hay productos asociados a esta categoria");
+                        alertDialogBuilder1.show();
+                    }
+                });
+                alertDialogBuilder.setCancelable(true);
+                alertDialogBuilder.show();
+
+
             });
         }
     }

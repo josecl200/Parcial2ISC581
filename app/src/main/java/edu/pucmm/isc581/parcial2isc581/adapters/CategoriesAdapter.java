@@ -70,7 +70,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
             nombreCategoria.setText(categoriaModel.getNombre());
 
             btnDel.setOnClickListener(v -> {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(btnDel.getContext());
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                 alertDialogBuilder.setTitle("Borrar producto");
                 alertDialogBuilder.setMessage("Está seguro de que quiere borrar la categoria ".concat(categoriaModel.getNombre().concat("?"))  );
                 alertDialogBuilder.setPositiveButton("Sí", (dialogInterface, i) -> {

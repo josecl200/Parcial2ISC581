@@ -97,7 +97,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
                 context.startActivity(intent);
             });
             btnDel.setOnClickListener(v -> {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(btnDel.getContext());
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                 alertDialogBuilder.setTitle("Borrar producto");
                 alertDialogBuilder.setMessage("Está seguro de que quiere borrar el producto " + productoModel.getName() + "?");
                 alertDialogBuilder.setPositiveButton("Sí", (dialogInterface, i) -> {
